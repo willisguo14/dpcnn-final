@@ -10,6 +10,11 @@ def main():
     results = model.evaluate(test_dataset)
     print(f"RESULTS\n{results}")
 
+    metrics = ['loss', 'accuracy', 'tp', 'fp', 'tn', 'fn', 'precision', 'recall']
+
+    with open('test_results.txt', 'w') as f:
+        for metric, result in zip(metrics, results):
+            f.write(f'{metric}: {result}\n')
 
 if __name__ == "__main__":
     main()

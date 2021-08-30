@@ -1,4 +1,5 @@
 import json
+import pickle
 import numpy as np
 import os
 import tensorflow as tf
@@ -10,6 +11,9 @@ def print_dict(my_dict):
     for key, value in my_dict.items():
         print(f"{key} => {value}\n")
 
+def pickle_dict(d, save_path):
+    with open(save_path, 'wb') as f:
+        pickle.dump(d, f)
 
  
 def get_token(node):
@@ -23,22 +27,22 @@ def get_token(node):
         tokens.append(node['name'])
 
     elif node_type == "IDENTIFIER" or node_type == "LITERAL":
-        tokens.append(node['typeFullName'])
+        if node['typeFullName'] in ['short', 'int', 'long', 'float', 'double', 'char', 'unsigned', 'signed', 'void' ,'wchar_t', 'size_t', 'bool']:
+            tokens.append(node['typeFullName'])
+        else:
+            tokens.append('object')
 
     elif node_type == "CALL":
         tokens.append(node['name'])
 
     elif node_type == "METHOD":
-        tokens.append(node['signature'])
+        tokens.append('function')
 
     elif node_type == "CONTROL_STRUCTURE":
         tokens.append(node['controlStructureType'])
 
     elif node_type == "BLOCK":
         tokens.append(node['typeFullName'])
-
-    elif node_type == "JUMP_TARGET":
-        tokens.append(node['name'])
 
     return tokens
 
@@ -187,15 +191,25 @@ def save_dataset(num_vec_dict, vec_length, dataset_name):
 def save_datasets(train_num_vec_dict, val_num_vec_dict, test_num_vec_dict, longest_vec_length, vocab_size):
 
     save_dataset(train_num_vec_dict, longest_vec_length, 'train_tf_dataset')
-    save_dataset(val_num_vec_dict, longest_vec_length, 'val__tf_dataset')
+    save_dataset(val_num_vec_dict, longest_vec_length, 'val_tf_dataset')
     save_dataset(test_num_vec_dict, longest_vec_length, 'test_tf_dataset')
 
-    
+
+def save_train_vars(vocab_size, input_len):
+    np.savez('train_vars', vocab_size=vocab_size, input_len=input_len)
 
 def main():
     train_token_vec_dict = get_token_vec_dict('ast/train.json')
     val_token_vec_dict = get_token_vec_dict('ast/val.json')
     test_token_vec_dict = get_token_vec_dict('ast/test.json')
+
+    pickle_dict(train_token_vec_dict, 'token_vec_dict/train.pickle')
+    pickle_dict(val_token_vec_dict, 'token_vec_dict/val.pickle')
+    pickle_dict(test_token_vec_dict, 'token_vec_dict/test.pickle')
+
+    print(len(train_token_vec_dict))
+    print(len(val_token_vec_dict))
+    print(len(test_token_vec_dict))
 
     token_freq_dict = {}
     token_freq_dict = update_token_freq_dict(train_token_vec_dict, token_freq_dict)
@@ -213,6 +227,8 @@ def main():
     longest_vec_length = get_longest_vec_length([train_num_vec_dict, val_num_vec_dict])
 
     save_datasets(train_num_vec_dict, val_num_vec_dict, test_num_vec_dict, longest_vec_length, vocab_size)
+    
+    save_train_vars(vocab_size, longest_vec_length)
 
 if __name__ == "__main__":
     main()

@@ -1,7 +1,12 @@
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import numpy as np
 
 def main():
+
+    with np.load('train_vars.npz') as train_vars:
+        vocab_size = train_vars['vocab_size']
+        input_len = train_vars['input_len']
     
     #* load datasets
     train_dataset = tf.data.experimental.load('train_tf_dataset')
@@ -37,7 +42,7 @@ def main():
         metrics=metrics
     )
 
-    history = model.fit(train_dataset, epochs=10, validation_data=val_dataset)
+    history = model.fit(train_dataset, epochs=15, validation_data=val_dataset)
 
     #* plot
     plt.plot(history.history['accuracy'])
