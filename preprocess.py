@@ -203,9 +203,12 @@ def main():
     val_token_vec_dict = get_token_vec_dict('ast/val.json')
     test_token_vec_dict = get_token_vec_dict('ast/test.json')
 
-    pickle_dict(train_token_vec_dict, 'token_vec_dict/train.pickle')
-    pickle_dict(val_token_vec_dict, 'token_vec_dict/val.pickle')
-    pickle_dict(test_token_vec_dict, 'token_vec_dict/test.pickle')
+    
+
+    pickle_dict(train_token_vec_dict, 'pickle/train_token_vec_dict.pickle')
+    pickle_dict(val_token_vec_dict, 'pickle/val_token_vec_dict.pickle')
+    pickle_dict(test_token_vec_dict, 'pickle/test_token_vec_dict.pickle')
+
 
     print(len(train_token_vec_dict))
     print(len(val_token_vec_dict))
@@ -217,6 +220,8 @@ def main():
     
     token_to_num_map, vocab_size = get_token_to_num_map(token_freq_dict)
 
+    pickle_dict(token_to_num_map, 'pickle/token_to_num_map.pickle')
+
     # print_dict(token_to_num_map)
     print(f"VOCAB SIZE: {vocab_size}")
 
@@ -226,7 +231,7 @@ def main():
 
     longest_vec_length = get_longest_vec_length([train_num_vec_dict, val_num_vec_dict])
 
-    save_datasets(train_num_vec_dict, val_num_vec_dict, test_num_vec_dict, longest_vec_length, vocab_size)
+    save_datasets([train_num_vec_dict, val_num_vec_dict, test_num_vec_dict], longest_vec_length, vocab_size)
     
     save_train_vars(vocab_size, longest_vec_length)
 
