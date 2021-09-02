@@ -231,7 +231,7 @@ def main():
 
     longest_vec_length = get_longest_vec_length([train_num_vec_dict, val_num_vec_dict])
 
-    save_datasets([train_num_vec_dict, val_num_vec_dict, test_num_vec_dict], longest_vec_length, vocab_size)
+    save_datasets(train_num_vec_dict, val_num_vec_dict, test_num_vec_dict, longest_vec_length, vocab_size)
     
     save_train_vars(vocab_size, longest_vec_length)
 

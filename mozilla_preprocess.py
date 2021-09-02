@@ -7,8 +7,14 @@ from preprocess import *
 def pad_num_vec_dict(num_vec_dict, vec_length):
 
     for fname, (vec, label) in num_vec_dict.items():
-        np_vec = np.asarray(vec)
-        np_vec.resize((vec_length,))
+        
+        if len(vec) < vec_length:
+            np_vec = np.asarray(vec)
+            np_vec.resize((vec_length,))
+        elif len(vec) > vec_length:
+            np_vec = vec[:vec_length]
+        else:
+            np_vec = vec
 
         num_vec_dict[fname] = (np_vec, label)
     
@@ -57,11 +63,11 @@ def main():
     pickle_dict(mozilla_token_vec_dict, 'pickle/mozilla_token_vec_dict.pickle')
     
     mozilla_num_vec_dict = get_num_vec_dict(mozilla_token_vec_dict, token_to_num_map)
-    mozilla_longest_vec_length = get_longest_vec_length([mozilla_num_vec_dict])
+    # mozilla_longest_vec_length = get_longest_vec_length([mozilla_num_vec_dict])
 
-    if mozilla_longest_vec_length > longest_vec_length:
-        print(f'mozilla longest: {mozilla_longest_vec_length} > dataset longest: {longest_vec_length}')
-        longest_vec_length = mozilla_longest_vec_length
+    # if mozilla_longest_vec_length > longest_vec_length:
+    #     print(f'mozilla longest: {mozilla_longest_vec_length} > dataset longest: {longest_vec_length}')
+    #     longest_vec_length = mozilla_longest_vec_length
     
     mozilla_num_vec_dict = pad_num_vec_dict(mozilla_num_vec_dict, longest_vec_length)
 
@@ -71,7 +77,7 @@ def main():
     num_vec_to_file_dict = get_num_vec_to_file_dict(mozilla_num_vec_dict)
     pickle_dict(num_vec_to_file_dict, 'pickle/mozilla_num_vec_to_file_dict.pickle')
 
-    save_train_vars(vocab_size, longest_vec_length)
+    # save_train_vars(vocab_size, longest_vec_length)
 
 if __name__ == "__main__":
     main()
